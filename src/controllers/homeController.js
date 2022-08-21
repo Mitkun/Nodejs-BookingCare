@@ -4,7 +4,7 @@ import CRUDService from '../services/CRUDService'
 let getHomePage = async (req, res) => {
   try {
     const data = await db.User.findAll();
-    console.log('data', data);
+
     return res.render('homepage.ejs', { data: JSON.stringify(data) });
   } catch (err) {
     console.log('error', err);
@@ -22,8 +22,6 @@ const getCRUD = (req, res) => {
 
 const postCRUD = async (req, res) => {
   let message = await CRUDService.createNewUser(req.body);
-
-  console.log(message);
 
   return res.send('post crud from server');
 }
@@ -58,6 +56,17 @@ const putCRUD = async (req, res) => {
   })
 }
 
+const deleteCRUD = async (req, res) => {
+  let id = req.query.id;
+  if (id) {
+    await CRUDService.deleteUderById(id);
+    return res.send('Delete the user succeed!')
+
+  } else {
+    return res.send('User not found!')
+  }
+}
+
 module.exports = {
   getHomePage: getHomePage,
   getAboutPage: getAboutPage,
@@ -65,5 +74,6 @@ module.exports = {
   postCRUD: postCRUD,
   displayGetCRUD: displayGetCRUD,
   getEditCRUD: getEditCRUD,
-  putCRUD: putCRUD
+  putCRUD: putCRUD,
+  deleteCRUD: deleteCRUD,
 }
