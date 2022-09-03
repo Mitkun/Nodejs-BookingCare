@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Allcode.init({
-    key: DataTypes.STRING,
+    keyword: DataTypes.STRING,
     type: DataTypes.STRING,
     valueEn: DataTypes.STRING,
     valueVi: DataTypes.STRING,

@@ -19,7 +19,7 @@ const handleUserLogin = (email, password) => {
   return new Promise(async (resolve, reject) => {
     try {
       let userData = {};
-      let isExist = await checkUerEmail(email);
+      let isExist = await checkUserEmail(email);
       if (isExist) {
 
         let user = await db.User.findOne({
@@ -62,7 +62,7 @@ const handleUserLogin = (email, password) => {
 };
 
 
-const checkUerEmail = (userEmail) => {
+const checkUserEmail = (userEmail) => {
   return new Promise(async (resolve, reject) => {
     try {
       let user = await db.User.findOne({
