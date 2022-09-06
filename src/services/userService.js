@@ -24,7 +24,7 @@ const handleUserLogin = (email, password) => {
 
         let user = await db.User.findOne({
           where: { email: email },
-          attributes: ['email', 'roleId', 'password'],
+          attributes: ['email', 'roleId', 'password', 'firstName', 'lastName'],
           raw: true,
         })
 
@@ -214,10 +214,37 @@ const deleteUser = (userId) => {
   })
 }
 
+const getAllCodeService = (typeInput) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!typeInput) {
+        resolve({
+          errCode: 1,
+          errMessage: 'Missing required parameters!'
+        })
+      } else {
+        let res = {}
+        let allCode = await db.Allcode.findAll({
+          where: { type: typeInput }
+        });
+
+        res.errCode = 0;
+        res.data = allCode;
+
+        resolve(res)
+      }
+
+    } catch (error) {
+      reject(e)
+    }
+  })
+}
+
 module.exports = {
   handleUserLogin: handleUserLogin,
   getAllUsers: getAllUsers,
   createNewUser: createNewUser,
   editUser: editUser,
   deleteUser: deleteUser,
+  getAllCodeService: getAllCodeService,
 }
