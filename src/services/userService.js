@@ -104,7 +104,7 @@ const createNewUser = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
       //TODO check email is exist
-      let checkEmail = await checkUerEmail(data.email);
+      let checkEmail = await checkUserEmail(data.email);
 
       if (checkEmail) {
         resolve({
