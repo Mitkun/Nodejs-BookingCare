@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import db from "../models";
+import db from '../models';
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -7,13 +7,12 @@ const hashUserPassword = (password) => {
   return new Promise(async (resolve, reject) => {
     try {
       let hashPassword = await bcrypt.hashSync(password, salt);
-      resolve(hashPassword)
-
+      resolve(hashPassword);
     } catch (error) {
-      reject(e)
+      reject(e);
     }
-  })
-}
+  });
+};
 
 const handleUserLogin = (email, password) => {
   return new Promise(async (resolve, reject) => {
@@ -21,65 +20,58 @@ const handleUserLogin = (email, password) => {
       let userData = {};
       let isExist = await checkUserEmail(email);
       if (isExist) {
-
         let user = await db.User.findOne({
           where: { email: email },
           attributes: ['email', 'roleId', 'password', 'firstName', 'lastName'],
           raw: true,
-        })
+        });
 
         if (user) {
           //TODO compate password
-          let check = await bcrypt.compareSync(password, user.password)
+          let check = await bcrypt.compareSync(password, user.password);
 
           if (check) {
-
             userData.errCode = 0;
             userData.errMessage = 'OK';
 
-            delete user.password
-            userData.user = user
+            delete user.password;
+            userData.user = user;
           } else {
             userData.errCode = 3;
-            userData.errMessage = "Wrong password";
+            userData.errMessage = 'Wrong password';
           }
-
         } else {
           userData.errCode = 2;
-          userData.errMessage = "User not found!";
+          userData.errMessage = 'User not found!';
         }
-
-
       } else {
         userData.errCode = 1;
         userData.errMessage = "Your's Email isn't exist in your system. plz try other email";
       }
-      resolve(userData)
+      resolve(userData);
     } catch (error) {
-      reject(error)
+      reject(error);
     }
-  })
+  });
 };
-
 
 const checkUserEmail = (userEmail) => {
   return new Promise(async (resolve, reject) => {
     try {
       let user = await db.User.findOne({
-        where: { email: userEmail }
-      })
+        where: { email: userEmail },
+      });
 
       if (user) {
         resolve(true);
       } else {
-        resolve(false)
+        resolve(false);
       }
-
     } catch (error) {
-      reject(error)
+      reject(error);
     }
-  })
-}
+  });
+};
 
 const getAllUsers = (userId) => {
   return new Promise(async (resolve, reject) => {
@@ -89,37 +81,36 @@ const getAllUsers = (userId) => {
       if (userId === 'ALL') {
         users = await db.User.findAll({
           attributes: {
-            exclude: ['password']
-          }
-        })
+            exclude: ['password'],
+          },
+        });
       } else if (userId) {
         users = await db.User.findOne({
           where: { id: userId },
           attributes: {
-            exclude: ['password']
-          }
-        })
+            exclude: ['password'],
+          },
+        });
       }
 
-      resolve(users)
-
+      resolve(users);
     } catch (err) {
-      reject(err)
+      reject(err);
     }
-  })
-}
+  });
+};
 
 const createNewUser = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
       //TODO check email is exist
-      let checkEmail = await checkUerEmail(data.email)
+      let checkEmail = await checkUerEmail(data.email);
 
       if (checkEmail) {
         resolve({
           errCode: 1,
-          message: 'Your email is already in used. Plz try another email!'
-        })
+          message: 'Your email is already in used. Plz try another email!',
+        });
       }
 
       let hashPasswordFromBcrypt = await hashUserPassword(data.password);
@@ -132,14 +123,14 @@ const createNewUser = (data) => {
         phonenumber: data.phonenumber,
         gender: data.gender === '1' ? true : false,
         roleId: data.roleId,
-      })
+      });
 
       resolve('ok create a new user succeed!');
     } catch (err) {
-      reject(err)
+      reject(err);
     }
-  })
-}
+  });
+};
 
 const editUser = (data) => {
   return new Promise(async (resolve, reject) => {
@@ -147,8 +138,8 @@ const editUser = (data) => {
       if (!data.id) {
         resolve({
           errCode: 2,
-          message: 'Missing required paremeters!'
-        })
+          message: 'Missing required paremeters!',
+        });
       } else {
         let user = await db.User.findOne({
           where: { id: data.id },
@@ -170,49 +161,46 @@ const editUser = (data) => {
 
           resolve({
             errCode: 0,
-            message: 'Update the user succeed!'
-          })
-
+            message: 'Update the user succeed!',
+          });
         } else {
           resolve({
             errCode: 1,
-            message: "User's not found!"
-          })
+            message: "User's not found!",
+          });
         }
       }
-
     } catch (error) {
-      reject(error)
+      reject(error);
     }
-  })
-}
+  });
+};
 
 const deleteUser = (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
       let user = await db.User.findOne({
         where: { id: userId },
-        raw: false
-      })
+        raw: false,
+      });
       if (!user) {
         resolve({
           errCode: 2,
-          errMessage: "The user isn't exist!"
-        })
+          errMessage: "The user isn't exist!",
+        });
       } else {
         await user.destroy();
 
         resolve({
           errCode: 0,
-          errMessage: "The user is deleted!"
-        })
+          errMessage: 'The user is deleted!',
+        });
       }
-
     } catch (err) {
-      reject(err)
+      reject(err);
     }
-  })
-}
+  });
+};
 
 const getAllCodeService = (typeInput) => {
   return new Promise(async (resolve, reject) => {
@@ -220,25 +208,24 @@ const getAllCodeService = (typeInput) => {
       if (!typeInput) {
         resolve({
           errCode: 1,
-          errMessage: 'Missing required parameters!'
-        })
+          errMessage: 'Missing required parameters!',
+        });
       } else {
-        let res = {}
+        let res = {};
         let allCode = await db.Allcode.findAll({
-          where: { type: typeInput }
+          where: { type: typeInput },
         });
 
         res.errCode = 0;
         res.data = allCode;
 
-        resolve(res)
+        resolve(res);
       }
-
     } catch (error) {
-      reject(e)
+      reject(e);
     }
-  })
-}
+  });
+};
 
 module.exports = {
   handleUserLogin: handleUserLogin,
@@ -247,4 +234,4 @@ module.exports = {
   editUser: editUser,
   deleteUser: deleteUser,
   getAllCodeService: getAllCodeService,
-}
+};

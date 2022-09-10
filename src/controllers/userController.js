@@ -1,4 +1,4 @@
-import userService from "../services/userService"
+import userService from '../services/userService';
 
 const handleLogin = async (req, res) => {
   let email = req.body.email;
@@ -7,16 +7,16 @@ const handleLogin = async (req, res) => {
   if (!email || !password) {
     return res.status(500).json({
       errCode: 1,
-      message: 'Missing inputs parameter'
+      message: 'Missing inputs parameter',
     });
-  };
+  }
 
-  let userData = await userService.handleUserLogin(email, password)
+  let userData = await userService.handleUserLogin(email, password);
 
   return res.status(200).json({
     errCode: userData.errCode,
     message: userData.errMessage,
-    user: userData.user ? userData.user : {}
+    user: userData.user ? userData.user : {},
   });
 };
 
@@ -27,59 +27,58 @@ const handleGetAllUser = async (req, res) => {
     return res.status(200).json({
       errCode: 1,
       message: 'Missing required parameters',
-      users: []
+      users: [],
     });
-  };
+  }
 
   let users = await userService.getAllUsers(id);
 
   return res.status(200).json({
     errCode: 0,
     message: 'OK',
-    users
-  })
+    users,
+  });
 };
 
 const handleCreateNewUser = async (req, res) => {
-  let message = await userService.createNewUser(req.body)
+  let message = await userService.createNewUser(req.body);
   console.log(message);
 
-  return res.status(200).json(message)
+  return res.status(200).json(message);
 };
 
 const handleEditUser = async (req, res) => {
   let data = req.body;
   let message = await userService.editUser(data);
 
-  return res.status(200).json(message)
+  return res.status(200).json(message);
 };
 
 const handleDeleteUser = async (req, res) => {
   if (!req.body.id) {
     return res.status(200).json({
       errCode: 1,
-      errMessage: "Missing required parameters!"
-    })
+      errMessage: 'Missing required parameters!',
+    });
   }
 
   let message = await userService.deleteUser(req.body.id);
-  return res.status(200).json(message)
+  return res.status(200).json(message);
 };
 
-const getAllCode = async(req, res) =>{
+const getAllCode = async (req, res) => {
   try {
     let data = await userService.getAllCodeService(req.query.type);
-    
-    return res.status(200).json(data)
-    
+
+    return res.status(200).json(data);
   } catch (error) {
     console.log('Get all code error: ', error);
     return res.status(200).json({
       errCode: -1,
-      errMessage:'Error from server'
-    })
+      errMessage: 'Error from server',
+    });
   }
-}
+};
 
 module.exports = {
   handleLogin: handleLogin,
@@ -87,5 +86,5 @@ module.exports = {
   handleCreateNewUser: handleCreateNewUser,
   handleEditUser: handleEditUser,
   handleDeleteUser: handleDeleteUser,
-  getAllCode:getAllCode,
-}
+  getAllCode: getAllCode,
+};
