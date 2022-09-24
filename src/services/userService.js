@@ -126,7 +126,10 @@ const createNewUser = (data) => {
         positionId: data.positionId,
       });
 
-      resolve('ok create a new user succeed!');
+      resolve({
+        errCode: 0,
+        message: 'ok create a new user succeed!',
+      });
     } catch (err) {
       reject(err);
     }
