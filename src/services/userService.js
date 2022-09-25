@@ -139,10 +139,10 @@ const createNewUser = (data) => {
 const editUser = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      if (!data.id) {
+      if (!data.id || !data.roleId || !data.positionId || !data.gender) {
         resolve({
           errCode: 2,
-          message: 'Missing required paremeters!',
+          message: 'Missing required parameters!',
         });
       } else {
         let user = await db.User.findOne({
@@ -154,6 +154,10 @@ const editUser = (data) => {
           user.firstName = data.firstName;
           user.lastName = data.lastName;
           user.address = data.address;
+          user.phonenumber = data.phonenumber;
+          user.roleId = data.roleId;
+          user.positionId = data.positionId;
+          user.gender = data.gender;
 
           await user.save();
 
