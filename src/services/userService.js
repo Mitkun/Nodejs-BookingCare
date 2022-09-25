@@ -111,20 +111,21 @@ const createNewUser = (data) => {
           errCode: 1,
           message: 'Your email is already in used. Plz try another email!',
         });
+      } else {
+        let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+        await db.User.create({
+          email: data.email,
+          password: hashPasswordFromBcrypt,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          image: data.avatar,
+          address: data.address,
+          phonenumber: data.phonenumber,
+          gender: data.gender,
+          roleId: data.roleId,
+          positionId: data.positionId,
+        });
       }
-
-      let hashPasswordFromBcrypt = await hashUserPassword(data.password);
-      await db.User.create({
-        email: data.email,
-        password: hashPasswordFromBcrypt,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        address: data.address,
-        phonenumber: data.phonenumber,
-        gender: data.gender,
-        roleId: data.roleId,
-        positionId: data.positionId,
-      });
 
       resolve({
         errCode: 0,
@@ -158,6 +159,9 @@ const editUser = (data) => {
           user.roleId = data.roleId;
           user.positionId = data.positionId;
           user.gender = data.gender;
+          if (data.avatar) {
+            user.image = data.avatar;
+          }
 
           await user.save();
 
