@@ -1,4 +1,8 @@
 import db from '../models/index';
+require('dotenv').config();
+import _ from 'lodash';
+
+const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 
 const getTopDoctorHome = (limit) => {
   return new Promise(async (resolve, reject) => {
@@ -128,9 +132,58 @@ const getDetailDoctorById = (inputId) => {
   });
 };
 
+const bulkCreateSchedule = (data) => {
+  return new Promise(async (resolve, reject) => {
+    if (!data.arrSchedule) {
+      resolve({
+        errCode: 1,
+        errMessage: 'Missing required parameter!',
+      });
+    } else {
+      let schedules = data.arrSchedule;
+      if (schedules?.length) {
+        schedules = schedules.map((item) => ({ ...item, maxNumber: MAX_NUMBER_SCHEDULE }));
+      }
+
+      if (data?.arrSchedule.length) {
+        const { doctorId, date } = data.arrSchedule[0];
+
+        let existing = await db.Schedule.findAll({
+          where: { doctorId: doctorId, date: date },
+          attributes: ['timeType'],
+        });
+
+        if (existing.length) {
+          let newData = _.differenceWith(schedules, existing, (a, b) => {
+            return a.timeType === b.timeType;
+          });
+
+          if (newData.length) {
+            await db.Schedule.bulkCreate(newData);
+          }
+        } else {
+          await db.Schedule.bulkCreate(schedules);
+        }
+      }
+
+      //
+
+      resolve({
+        errCode: 0,
+        errMessage: 'OK',
+      });
+    }
+    try {
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
   getTopDoctorHome: getTopDoctorHome,
   getAllDoctors: getAllDoctors,
   saveDetailDoctor: saveDetailDoctor,
   getDetailDoctorById: getDetailDoctorById,
+  bulkCreateSchedule: bulkCreateSchedule,
 };
